@@ -10,8 +10,26 @@ qemu中模拟的每一种设备都在代码中对应了一个类型，这个类�
 
 [设备类型注册][1]
 
+# 设备类型初始化
+
+设备类型注册后，在需要使用之前得初始化该类型，并生成对应得ObjectClass对象。
+
+[设备类型初始化][2]
+
+# 设备实例化
+
+接着就是实例化设备类型，也就是真的生成一个设备给虚拟机使用。
+
+[设备实例化][3]
+
+# device设备的隐藏套路
+
+
+
 # 面向对象的设备模型
 
 [面向对象的设备模型][]
 
 [1]: /device_model/01-type_register.md
+[2]: /device_model/02-register_objectclass.md
+[3]: /device_model/03-objectclass_instance.md
