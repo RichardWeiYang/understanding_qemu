@@ -10,3 +10,4 @@
   * [从初始化开始](address_space/01-initialization.md)
   * [MemoryRegion](address_space/02-MemoryRegion.md)
   * [AddressSpace part1](address_space/03-AddressSpace1.md)
+  * [FlatView](address_space/04-FlatView.md)
