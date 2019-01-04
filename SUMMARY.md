@@ -9,6 +9,7 @@
 * [地址空间](address_space/00-as.md)
   * [从初始化开始](address_space/01-initialization.md)
   * [MemoryRegion](address_space/02-MemoryRegion.md)
-  * [AddressSpace part1](address_space/03-AddressSpace1.md)
+  * [AddressSpace Part1](address_space/03-AddressSpace1.md)
   * [FlatView](address_space/04-FlatView.md)
   * [RAMBlock](address_space/05-RAMBlock.md)
+  * [AddressSpace Part2](address_space/06-AddressSpace2.md)
