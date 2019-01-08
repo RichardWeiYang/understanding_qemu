@@ -108,4 +108,6 @@ Dump MemoryRegion:system
 
 怎么样，这样是不是更清楚了？
 
+最近发现在qemu monitor中已经有类似的功能了。直接输入info mtree，就可以获得内存树结构。
+
 [1]: https://gist.github.com/RichardWeiYang/123ce27f686165dca9a27278384d1081
