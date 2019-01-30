@@ -67,7 +67,7 @@ static const TypeInfo e1000_base_info = {
 假如我们用一个图来描述，大概可以画成这样。
 
 ```
-       type_table(GHashTable)  ; this is a hash table with name as the key
+        type_table(GHashTable)  ; this is a hash table with name as the key
        +-----------------------+
        |                       |
        +-----------------------+
@@ -75,11 +75,13 @@ static const TypeInfo e1000_base_info = {
                 v
        +------------------+                   +--------------------+
        |TypeImpl*         | <--- type_new()   | TypeInfo           |
+       |    TYPE_PC_DIMM  |                   |     TYPE_PC_DIMM   |
        +------------------+                   +--------------------+
                 |
                 v
        +------------------+                   +--------------------+
        |TypeImpl*         | <--- type_new()   | TypeInfo           |
+       |    TYPE_MACHINE  |                   |     TYPE_MACHINE   |
        +------------------+                   +--------------------+
 ```
 
@@ -141,6 +143,31 @@ void register_module_init(void (*fn)(void), module_init_type type)
 所以说qemu有时候有点蛋疼。又整了一个链表，把设备类型注册函数添加到里面。在这个e1000的例子中就是e1000_register_types这个函数。
 
 细心的朋友可能还注意到了，这个链表还分了类型。对type_init()而言，这个类型是**MODULE_INIT_QOM**。记住这个，后面我们将会用到。
+
+来看一下这个注册函数的链表: init_type_list[MODULE_INIT_MAX]
+
+```
+    init_type_list[MODULE_INIT_MAX]
+    +-----------------------------+
+    |MODULE_INIT_BLOCK            |
+    |                             |
+    |                             |
+    +-----------------------------+
+    |MODULE_INIT_OPTS             |
+    |                             |
+    |                             |
+    +-----------------------------+      +-----------------------+     +-----------------------+
+    |MODULE_INIT_QOM              | ---->|                       |---->|                       |
+    |                             |      |e1000_register_types   |     |pc_dimm_register_types |
+    |                             |      |   --> type_register() |     |   --> type_register() |
+    +-----------------------------+      +-----------------------+     +-----------------------+
+    |MODULE_INIT_TRACE            |
+    |                             |
+    |                             |
+    +-----------------------------+
+```
+
+这样就形成了一个注册函数的数组，不同的类型各自添加到这个数组中。
 
 ## 执行设备类型注册
 
