@@ -73,17 +73,37 @@ static const TypeInfo e1000_base_info = {
        +-----------------------+
                 |
                 v
-       +------------------+                   +--------------------+
-       |TypeImpl*         | <--- type_new()   | TypeInfo           |
-       |    TYPE_PC_DIMM  |                   |     TYPE_PC_DIMM   |
-       +------------------+                   +--------------------+
+       +--------------------------+                   +----------------------------+
+       |TypeImpl*                 | <--- type_new()   | TypeInfo                   |
+       |    name                  |                   |     name                   |
+       |    parent                |                   |     parent                 |
+       |                          |                   |                            |
+       |    class_size            |                   |     class_size             |
+       |    class_init            |                   |     class_init             |
+       |    class_base_init       |                   |     class_base_init        |
+       |    class_finalize        |                   |     class_finalize         |
+       |    class_data            |                   |     class_data             |
+       |                          |                   |                            |
+       |    instance_size         |                   |     instance_size          |
+       |    instance_init         |                   |     instance_init          |
+       |    instance_post_init    |                   |     instance_post_init     |
+       |    instance_finalize     |                   |     instance_finalize      |
+       |                          |                   |                            |
+       |    abstract              |                   |     abstract               |
+       |    interfaces            |                   |     interfaces             |
+       |    num_interfaces        |                   |     num_interfaces         |
+       +--------------------------+                   +----------------------------+
                 |
                 v
-       +------------------+                   +--------------------+
-       |TypeImpl*         | <--- type_new()   | TypeInfo           |
-       |    TYPE_MACHINE  |                   |     TYPE_MACHINE   |
-       +------------------+                   +--------------------+
+       +--------------------------+                   +----------------------------+
+       |TypeImpl*                 | <--- type_new()   | TypeInfo                   |
+       |    TYPE_MACHINE          |                   |     TYPE_MACHINE           |
+       +--------------------------+                   +----------------------------+
 ```
+
+可以看到，几乎所有的成员两者是一致的。这里所做的工作就是把内容复制了一遍。
+
+为啥不直接用呢？不懂。
 
 # 何时注册设备类型
 
