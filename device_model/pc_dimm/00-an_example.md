@@ -4,4 +4,10 @@
 
 [PCDIMM类型][1]
 
-[1]: /device_model/pc_dimm/00-pc_dimm_class.md
+[PCDIMM实例][2]
+
+[插入系统][3]
+
+[1]: /device_model/pc_dimm/01-pc_dimm_class.md
+[2]: /device_model/pc_dimm/02-pc_dimm_instance.md
+[3]: /device_model/pc_dimm/03-plug.md
