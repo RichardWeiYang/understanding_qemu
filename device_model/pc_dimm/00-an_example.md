@@ -8,6 +8,11 @@
 
 [插入系统][3]
 
+最后再说一下PCDIMM的子类型NVDIMM的虚拟化。
+
+[NVDIMM][4]
+
 [1]: /device_model/pc_dimm/01-pc_dimm_class.md
 [2]: /device_model/pc_dimm/02-pc_dimm_instance.md
 [3]: /device_model/pc_dimm/03-plug.md
+[4]: /device_model/pc_dimm/04-nvdimm.md

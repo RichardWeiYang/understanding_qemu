@@ -10,6 +10,7 @@
     * [PCDIMM类型](device_model/pc_dimm/01-pc_dimm_class.md)
     * [PCDIMM实例](device_model/pc_dimm/02-pc_dimm_instance.md)
     * [插入系统](device_model/pc_dimm/03-plug.md)
+    * [NVDIMM](device_model/pc_dimm/04-nvdimm.md)
 * [地址空间](address_space/00-as.md)
   * [从初始化开始](address_space/01-initialization.md)
   * [MemoryRegion](address_space/02-MemoryRegion.md)
