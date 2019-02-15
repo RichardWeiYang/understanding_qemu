@@ -22,11 +22,11 @@ qemu中模拟的每一种设备都在代码中对应了一个类型，这个类�
 
 [设备实例化][3]
 
-# device实例的隐藏套路
+# DeviceClass实例化细节
 
-对于qemu中一个"device"设备，除了实例化中instance_init函数之外，还有一个非常重要的实例化套路。
+对于qemu中一个"device"设备，除了实例化中instance_init函数之外，还隐藏了很多实现的细节。
 
-[device实例的隐藏套路][4]
+[DeviceClass实例化细节][4]
 
 # 面向对象的设备模型
 
@@ -39,5 +39,5 @@ qemu中模拟的每一种设备都在代码中对应了一个类型，这个类�
 [1]: /device_model/01-type_register.md
 [2]: /device_model/02-register_objectclass.md
 [3]: /device_model/03-objectclass_instance.md
-[4]: /device_model/04-device_hidden_part.md
+[4]: /device_model/04-DeviceClass_instance.md
 [5]: /device_model/05-device_oo_model.md
