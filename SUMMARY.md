@@ -7,6 +7,7 @@
   * [DeviceClass实例化细节](device_model/04-DeviceClass_instance.md)
   * [面向对象的设备模型](device_model/05-device_oo_model.md)
   * [接口](device_model/06-interface.md)
+  * [类型、对象和接口之间的转换](device_model/07-class_obj_interface.md)
   * [PCDIMM](device_model/pc_dimm/00-an_example.md)
     * [PCDIMM类型](device_model/pc_dimm/01-pc_dimm_class.md)
     * [PCDIMM实例](device_model/pc_dimm/02-pc_dimm_instance.md)
