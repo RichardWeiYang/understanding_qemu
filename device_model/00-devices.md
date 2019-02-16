@@ -36,8 +36,17 @@ qemu中模拟的每一种设备都在代码中对应了一个类型，这个类�
 
 [面向对象的设备模型][5]
 
+# 接口
+
+随着系统的复杂，设备模型中又提出了接口的概念。没怎么用过java，也不知道概念是不是类似。
+
+原本不想看这个部分，谁想到代码中使用到接口的地方还挺多。所以只好硬着头皮看了一遍。
+
+[接口][6]
+
 [1]: /device_model/01-type_register.md
 [2]: /device_model/02-register_objectclass.md
 [3]: /device_model/03-objectclass_instance.md
 [4]: /device_model/04-DeviceClass_instance.md
 [5]: /device_model/05-device_oo_model.md
+[6]: /device_model/06-interface.md
