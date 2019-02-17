@@ -1,19 +1,5 @@
 NVDIMM是PCDIMM的子类型，所以整体的流程基本差不多，着重讲一下几个不同之处。
 
-# 分配label区域
-
-按照当前的实现，使用nvdimm设备时，在分配空间的最后挖出一块做label。这个工作在nvdimm_prepare_memory_region中完成。
-
-# 填写nfit信息
-
-这部分需要在计算好了dimm地址后进行，有nvdimm_build_fit_buffer完成
-
-# 构建acpi
-
-最终nvdimm的信息要填写到acpi中，一共有两张表：SSDT和NFIT。
-
-这部分工作在nvdimm_build_acpi中完成。
-
 # 全局
 
 用一个图来标示一下这几个工作对应在哪里完成的。
@@ -41,3 +27,17 @@ main()
 ```
 
 所以也就是这三个地方和PCDIMM设备的添加有所不同。
+
+# 分配label区域
+
+按照当前的实现，使用nvdimm设备时，在分配空间的最后挖出一块做label。这个工作在nvdimm_prepare_memory_region中完成。
+
+# 填写nfit信息
+
+这部分需要在计算好了dimm地址后进行，有nvdimm_build_fit_buffer完成
+
+# 构建acpi
+
+最终nvdimm的信息要填写到acpi中，一共有两张表：SSDT和NFIT。
+
+这部分工作在nvdimm_build_acpi中完成。
