@@ -58,6 +58,12 @@ qemu中模拟的每一种设备都在代码中对应了一个类型，这个类�
 
 [类型、对象和接口之间的转换][7]
 
+# PCDIMM设备
+
+最后我们以PCDIMM设备为例，详细剖析一下该设备初始化并加入系统的过程。
+
+[PCDIMM][8]
+
 [1]: /device_model/01-type_register.md
 [2]: /device_model/02-register_objectclass.md
 [3]: /device_model/03-objectclass_instance.md
@@ -65,3 +71,4 @@ qemu中模拟的每一种设备都在代码中对应了一个类型，这个类�
 [5]: /device_model/05-device_oo_model.md
 [6]: /device_model/06-interface.md
 [7]: /device_model/07-class_obj_interface.md
+[8]: /device_model/pc_dimm/00-an_example.md
