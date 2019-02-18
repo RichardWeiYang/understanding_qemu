@@ -288,4 +288,105 @@ NTFI = Local6
 
 就相当于往NTFI这个指针写了Local6的值。
 
+## 模拟nvdimm的_DSM
+
+好了，绕了这么大一圈，终于可以回到正题看看nvdimm的_DSM是如何模拟的。
+
+所谓模拟，也就是在guest执行_DSM方法时截获该操作，由qemu进行模拟。
+
+### guest内核
+
+所以正式开始前，我们还得看一眼内核中执行_DSM时做了点什么。
+
+下面的代码截取自acpi_evaluate_dsm()
+
+```
+	params[0].type = ACPI_TYPE_BUFFER;
+	params[0].buffer.length = 16;
+	params[0].buffer.pointer = (u8 *)guid;
+	params[1].type = ACPI_TYPE_INTEGER;
+	params[1].integer.value = rev;
+	params[2].type = ACPI_TYPE_INTEGER;
+	params[2].integer.value = func;
+	if (argv4) {
+		params[3] = *argv4;
+	} else {
+		params[3].type = ACPI_TYPE_PACKAGE;
+		params[3].package.count = 0;
+		params[3].package.elements = NULL;
+	}
+
+	ret = acpi_evaluate_object(handle, "_DSM", &input, &buf);
+```
+
+别的不管，主要看一共传进来了四个参数。比如有版本号和函数。这里先记着，留着后面再来看。
+
+### AML
+
+回到之前看得acpi表总的来说，SSDT表在地址空间上构建了这么两段：
+
+```
+                      0xA18                 MEMA
+   +------------------+--+------------------+------+-------------+
+   |                  |  |                  |      |             |
+   +------------------+--+------------------+------+-------------+
+                                          /          \
+                                        /              \
+                                        +--------------+
+                                        |HDLE          |
+                                        |REVS          |
+                                        |FUNC          |
+                                        |FARG          |
+                                        +--------------+
+```
+
+其目的就是创建了一块共享内存，用来在guest和qemu之间传递模拟_DSM的参数和返回值。
+
+比如我们可以在aml文件中看到
+
+```
+REVS = Arg1
+FUNC = Arg2
+```
+
+而其中Arg1就是内核传递下来的参数rev，Arg2是内核传递参数的func。
+
+### Qemu
+
+当AML执行了 NFIT = Local6 的时候，接下去的操作就被Qemu截获了。而这个Local6参数的值是什么呢？
+
+> Local6 = MEMA
+
+所以，实际上就是告诉了Qemu一块共享内存的空间。这下是不是明白了？
+
+那Qemu截获后是如何操作？这还要看nvdimm_dsm_ops了。因为是写操作，所以只看write方法。
+
+其中有一个变量很引人注目：NvdimmDsmIn。
+
+```
+NvdimmDsmIn *in;
+
+in->revision = le32_to_cpu(in->revision);
+in->function = le32_to_cpu(in->function);
+in->handle = le32_to_cpu(in->handle);
+```
+
+而这个变量类型定义为：
+
+```
+struct NvdimmDsmIn {
+    uint32_t handle;
+    uint32_t revision;
+    uint32_t function;
+    /* the remaining size in the page is used by arg3. */
+    union {
+        uint8_t arg3[4084];
+    };
+} QEMU_PACKED;
+```
+
+这下是不是和AML中共享内存的结构对应起来了？
+
+好了，再详细的细节就和具体的函数实现相关了。留给大家自己去探索把～
+
 [1]: https://gist.github.com/RichardWeiYang/aea8e71f5c9ff71499d19e77eb8a777e
