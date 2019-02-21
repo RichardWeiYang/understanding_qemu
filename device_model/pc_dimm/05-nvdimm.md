@@ -29,6 +29,11 @@ main()
                     nvdimm_build_acpi                           (3)
                         nvdimm_build_ssdt
                         nvdimm_build_nfit
+
+                acpi_add_rom_blob(build_state, tables.table_data,
+                                  "etc/acpi/tables", 0x200000);
+                acpi_add_rom_blob(build_state, tables.linker->cmd_blob,
+                                  "etc/table-loader", 0);
 ```
 
 从上面的图中可以看到NVDIMM设备初始化和PCDIMM设备类似，也是有这么几个步骤
@@ -388,5 +393,13 @@ struct NvdimmDsmIn {
 这下是不是和AML中共享内存的结构对应起来了？
 
 好了，再详细的细节就和具体的函数实现相关了。留给大家自己去探索把～
+
+# 最后的疑问
+
+如果大家仔细看，比较qemu中aml的代码和guest中SSDT生成的文件，其中还有一个问题没有解决。
+
+那就是 Local6 = MEMA 的这个MEMA的地址是如何得到的。
+
+这个就牵扯到了另外两个超纲的知识点，将在FW_CFG章节中解开这个谜团。
 
 [1]: https://gist.github.com/RichardWeiYang/aea8e71f5c9ff71499d19e77eb8a777e
