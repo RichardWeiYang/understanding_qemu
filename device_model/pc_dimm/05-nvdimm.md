@@ -400,6 +400,7 @@ struct NvdimmDsmIn {
 
 那就是 Local6 = MEMA 的这个MEMA的地址是如何得到的。
 
-这个就牵扯到了另外两个超纲的知识点，将在FW_CFG章节中解开这个谜团。
+这个就牵扯到了另外两个超纲的知识点，将在[FW_CFG][2]章节中解开这个谜团。
 
 [1]: https://gist.github.com/RichardWeiYang/aea8e71f5c9ff71499d19e77eb8a777e
+[2]: /fw_cfg/00-qmeu_bios_guest.md
