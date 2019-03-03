@@ -22,6 +22,7 @@
   * [RAMBlock](address_space/05-RAMBlock.md)
   * [AddressSpace Part2](address_space/06-AddressSpace2.md)
   * [眼见为实](address_space/07-witness.md)
+  * [添加MemoryRegion](address_space/08-commit_mr.md)
 * [FW_CFG](fw_cfg/00-qmeu_bios_guest.md)
   * [规范解读](fw_cfg/01-spec.md)
   * [Linux Guest](fw_cfg/02-linux_guest.md)
