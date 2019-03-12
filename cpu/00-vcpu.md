@@ -4,6 +4,9 @@
 
 [TYPE_CPU][1]
 
+接着有不同类型的CPU。如
 
+[X86_CPU][2]
 
 [1]: /cpu/01-type_cpu.md
+[2]: /cpu/02-x86_cpu.md

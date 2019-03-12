@@ -28,6 +28,7 @@
   * [PCMachine](machine/02-pc_machine.md)
 * [CPU](cpu/00-vcpu.md)
   * [TYPE_CPU](cpu/01-type_cpu.md)
+  * [X86_CPU](cpu/02-x86_cpu.md)
 * [APIC](apic/00-advance_interrupt_controller.md)
   * [纯软件模拟](apic/01-software_emulate.md)
 * [FW_CFG](fw_cfg/00-qmeu_bios_guest.md)
