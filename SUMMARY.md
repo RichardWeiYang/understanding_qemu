@@ -26,6 +26,8 @@
 * [Machine](machine/00-mt.md)
   * [MachineType](machine/01-machine_type.md)
   * [PCMachine](machine/02-pc_machine.md)
+* [APIC](apic/00-advance_interrupt_controller.md)
+  * [纯软件模拟](apic/01-software_emulate.md)
 * [FW_CFG](fw_cfg/00-qmeu_bios_guest.md)
   * [规范解读](fw_cfg/01-spec.md)
   * [Linux Guest](fw_cfg/02-linux_guest.md)
