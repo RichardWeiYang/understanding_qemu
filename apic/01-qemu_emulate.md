@@ -23,8 +23,6 @@
     |realize                      | = apic_common_realize
     +-----------------------------+
 
-
-
     APICCommonClass TYPE_APIC_COMMON "apic-common"
     +-----------------------------+
     |class_size                   | = sizeof(APICCommonClass)
@@ -34,8 +32,6 @@
     |instance_init                | = apic_common_initfn       
     |                             |
     +-----------------------------+
-
-
 
     APICCommonClass TYPE_APIC "apic"                  
     +-----------------------------+                   

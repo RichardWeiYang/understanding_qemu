@@ -4,8 +4,8 @@
 
 随着技术的发展，现在有至少两种中断虚拟化的方式。
 
-  * [纯软件模拟][1]
+  * [纯Qemu模拟][1]
 
   * [硬件辅助模拟]
 
-[1]: /apic/01-software_emulate.md
+[1]: /apic/01-qemu_emulate.md
