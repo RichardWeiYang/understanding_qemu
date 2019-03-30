@@ -6,6 +6,7 @@
 
   * [纯Qemu模拟][1]
 
-  * [硬件辅助模拟]
+  * [Qemu/kernel混合模拟][2]
 
 [1]: /apic/01-qemu_emulate.md
+[2]: /apic/02-qemu_kernel_emulate.md

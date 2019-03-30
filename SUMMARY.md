@@ -31,6 +31,7 @@
   * [X86_CPU](cpu/02-x86_cpu.md)
 * [APIC](apic/00-advance_interrupt_controller.md)
   * [纯Qemu模拟](apic/01-qemu_emulate.md)
+  * [Qemu/kernel混合模拟](apic/02-qemu_kernel_emulate.md)
 * [FW_CFG](fw_cfg/00-qmeu_bios_guest.md)
   * [规范解读](fw_cfg/01-spec.md)
   * [Linux Guest](fw_cfg/02-linux_guest.md)
