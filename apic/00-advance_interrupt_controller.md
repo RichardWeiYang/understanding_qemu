@@ -8,5 +8,10 @@
 
   * [Qemu/kernel混合模拟][2]
 
+在第二种模拟的方式上，硬件又进一步做了辅助模拟
+
+  * [APICV][3]
+
 [1]: /apic/01-qemu_emulate.md
 [2]: /apic/02-qemu_kernel_emulate.md
+[3]: /apic/03-apicv.md
