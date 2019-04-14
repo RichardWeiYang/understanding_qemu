@@ -276,10 +276,12 @@ kvm_apic_mem_write()
                 APIC_DM_FIXED
                     kvm_lapic_set_vector
                     kvm_lapic_clear_vector
-                    kvm_x86_ops->deliver_posted_interrupt(vcpu, vector);
-                    kvm_lapic_set_irr
-                    kvm_make_request(KVM_REQ_EVENT, vcpu)
-                    kvm_vcpu_kick()
+                    if (vcpu->arch.apicv_active)
+                      kvm_x86_ops->deliver_posted_interrupt(vcpu, vector);
+                    else
+                      kvm_lapic_set_irr
+                      kvm_make_request(KVM_REQ_EVENT, vcpu)
+                      kvm_vcpu_kick()
                 APIC_DM_REMRD
                     kvm_make_request(KVM_REQ_EVENT, vcpu)
                     kvm_vcpu_kick()
