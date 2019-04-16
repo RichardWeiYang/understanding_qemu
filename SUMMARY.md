@@ -33,6 +33,8 @@
   * [纯Qemu模拟](apic/01-qemu_emulate.md)
   * [Qemu/kernel混合模拟](apic/02-qemu_kernel_emulate.md)
   * [APICV](apic/03-apicv.md)
+* [Live Migration](lm/00-lm.md)
+  * [从用法说起](lm/01-migrate_command_line.md)
 * [FW_CFG](fw_cfg/00-qmeu_bios_guest.md)
   * [规范解读](fw_cfg/01-spec.md)
   * [Linux Guest](fw_cfg/02-linux_guest.md)
