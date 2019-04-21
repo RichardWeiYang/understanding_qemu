@@ -157,8 +157,12 @@
              section_type = qemu_get_byte(f)
              QEMU_VM_SECTION_START | QEMU_VM_SECTION_FULL
              qemu_loadvm_section_start_full
+                section_id = qemu_get_be32
+                vmstate_load
              QEMU_VM_SECTION_PART | QEMU_VM_SECTION_END
              qemu_loadvm_section_part_end
+                 section_id = qemu_get_be32
+                 vmstate_load
              QEMU_VM_COMMAND
              loadvm_process_command
              QEMU_VM_EOF
@@ -170,6 +174,16 @@
 ```
 
 接收的过程相对发送要“简单”，主要的工作都隐藏在了section的三种情况中。
+
+  * QEMU_VM_SECTION_START | QEMU_VM_SECTION_FULL
+  * QEMU_VM_SECTION_PART | QEMU_VM_SECTION_END
+  * QEMU_VM_COMMAND
+
+第一种代表了setup阶段和最后vmstate_save阶段。
+第二种代表了iteration的中间阶段和最后一次完成。
+第三种还没有仔细看。
+
+但是至少从前两种情况看，大家都走到了vmstate_load。不错。
 
 # SaveStateEntry
 
@@ -211,7 +225,7 @@
     +-----------------------------+         +-----------------------------+      +------------------------------------+
 ```
 
-所有的SaveStateEntry结构都链接在全局链表savevm_state上。上图列举了几个比较重要的SaveStateEntry。比如名字叫ram的就是管理RAMBlock的。
+所有的SaveStateEntry结构都链接在全局链表savevm_state上。上图列举了几个比较重要的SaveStateEntry。比如名字叫ram的就是管理RAMBlock的。而且有意思的是，这几个的vmsd都是空。
 
 # 隐藏的重点
 

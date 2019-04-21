@@ -12,6 +12,9 @@ VMStateDescription并不是单独存在，而是SaveStateEntry的一部分。但
 
 ```
      vmstate_save(f, se, vmdesc)
+         if (!se->vmsd) {
+             vmstate_save_old_style(f, se, vmdesc);
+
          vmstate_save_state(f, se->vmsd, se->opaque, vmdesc)
              vmsd->pre_save(se->opaque)
 
@@ -27,7 +30,7 @@ VMStateDescription并不是单独存在，而是SaveStateEntry的一部分。但
              vmstate_subsection_save()
                  vmstate_save_state(f, vmsdsub, se->opaque, vmdesc)
 
-             vmsd->pre_save(se->opaque)
+             vmsd->post_save(se->opaque)
 ```
 
 当然这个调用图中我们跳过了没有vmsd的情况。先着重观察有vmsd时的操作。
@@ -37,6 +40,32 @@ VMStateDescription并不是单独存在，而是SaveStateEntry的一部分。但
   * vmsd有多个field
   * field有多个element
   * field类型可以嵌套
+
+# 接收流程 vmstate_load
+
+这个函数是vmstate_save的另一半。
+
+```
+     vmstate_load(f, se)
+         if (!se->vmsd)
+             se->ops->load_state()
+         vmstate_load_state(f, se->vmsd, se->opaque, se->load_version_id)
+             vmsd->pre_load(se->opaque)
+
+             ; iterate on fields
+             ; iterate on elements of this field
+             vmstate_load_state(f, field->vmsd, curr_elem, field->vmsd->version_id)
+             vmstate_load_state(f, field->vmsd, curr_elem, field->struct_version_id)
+             field->info->get(f, curr_elem, size, field)
+
+             ; go into subsection
+             vmstate_subsection_save()
+                 vmstate_save_state(f, vmsdsub, se->opaque, vmdesc)
+
+             vmsd->pre_save(se->opaque)
+```
+
+可谓是珠联璧合。
 
 # 结构体
 
