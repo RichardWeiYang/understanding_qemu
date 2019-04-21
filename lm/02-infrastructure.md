@@ -143,9 +143,37 @@
 
 ## qemu_loadvm_state
 
+```
+     qemu_loadvm_state()
+         qemu_get_be32, QEMU_VM_FILE_MAGIC
+         qemu_get_be32, QEMU_VM_FILE_VERSION
+         qemu_loadvm_state_setup
+             se->ops->load_setup
+         vmstate_load_state(f, &vmstate_configuration, &savevm_state, 0)
+         cpu_synchronize_all_pre_loadvm
+             cpu_synchronize_pre_loadvm(cpu)
+
+         qemu_loadvm_state_main
+             section_type = qemu_get_byte(f)
+             QEMU_VM_SECTION_START | QEMU_VM_SECTION_FULL
+             qemu_loadvm_section_start_full
+             QEMU_VM_SECTION_PART | QEMU_VM_SECTION_END
+             qemu_loadvm_section_part_end
+             QEMU_VM_COMMAND
+             loadvm_process_command
+             QEMU_VM_EOF
+
+         qemu_loadvm_state_cleanup
+             se->ops->load_cleanup
+         cpu_synchronize_all_post_init
+             cpu_synchronize_post_init(cpu);
+```
+
+接收的过程相对发送要“简单”，主要的工作都隐藏在了section的三种情况中。
+
 # SaveStateEntry
 
-迁移过程中起到关键作用的数据结构名字是SaveStateEntry，也就是之前的se。
+迁移过程中起到关键作用的数据结构名字是SaveStateEntry，也就是代码中的se。
 
 ```
     SaveState(savevm_state)
