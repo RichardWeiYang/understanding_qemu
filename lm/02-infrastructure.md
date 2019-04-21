@@ -1,6 +1,8 @@
 现在就让我们来看看迁移这件事的总体架构吧。
 
-# 从migrate命令开始
+# 发送端
+
+## 从migrate命令开始
 
 通过上一小节的例子，我们可以看到迁移可以通过在monitor中执行命令开始。既然如此，那我们就从这里开始。
 
@@ -39,7 +41,7 @@
 
 但是万变不离其宗，最后都启动了migration_thread这个线程处理。
 
-# 迁移主函数 migration_thread
+## 迁移主函数 migration_thread
 
 所以最关键的就是这个迁移的主函数migration_thread。那我们把这个函数也打开。
 
@@ -102,7 +104,44 @@
 * 迭代传输
 * 完成迁移
 
-其中主要就是通过几个不同的se->ops来实现的。那接下来的问题就是se究竟是什么东东。
+其中主要就是通过几个不同的se->ops来实现的。
+
+# 接收端
+
+## 从incoming开始
+
+接收端在运行时需要加上-incoming选项，所以我们也从incoming开始。
+
+```
+      qemu_start_incoming_migration()
+         deferred_incoming_migration()
+         tcp_start_incoming_migration()
+             socket_start_incoming_migration()
+         rdma_start_incoming_migration()
+             rdma_accept_incoming_migration()
+                 migration_fd_process_incoming()
+                     migration_incoming_setup()
+                     migration_incoming_process()
+         exec_start_incoming_migration()
+             exec_accept_incoming_migration()
+                 migration_channel_process_incoming()
+         unix_start_incoming_migration()
+             socket_start_incoming_migration()
+                 socket_accept_incoming_migration()
+                     migration_channel_process_incoming()
+         fd_start_incoming_migration()
+             fd_accept_incoming_migration()
+                 migration_channel_process_incoming()
+                     migration_tls_channel_process_incoming()
+                     migration_ioc_process_incoming()
+                         migration_incoming_process()
+                             process_incoming_migration_co()
+                                 qemu_loadvm_state()
+```
+
+看着要比发送端麻烦些，不过还好找到了各种方式最终都执行到qemu_loadvm_state()。
+
+## qemu_loadvm_state
 
 # SaveStateEntry
 
