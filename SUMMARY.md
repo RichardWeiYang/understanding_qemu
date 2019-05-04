@@ -37,6 +37,7 @@
   * [从用法说起](lm/01-migrate_command_line.md)
   * [整体架构](lm/02-infrastructure.md)
   * [VMStateDescription](lm/03-vmsd.md)
+  * [内存热迁移](lm/04-ram_migration.md)
 * [FW_CFG](fw_cfg/00-qmeu_bios_guest.md)
   * [规范解读](fw_cfg/01-spec.md)
   * [Linux Guest](fw_cfg/02-linux_guest.md)
