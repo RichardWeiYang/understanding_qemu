@@ -112,3 +112,31 @@ RAMBlock.bmap是每个RAMBlock表示的地址空间的bitmap。
   * 每次内存迁移迭代开始，将ram_list.dirty_memory[]更新到RAMBlock.bmap
 
 这样两个bitmap各司其职可以同步进行。
+
+# 进化
+
+理解了总体的流程和重要的数据结构，我们来看看内存迁移部分是如何进化的。如何从最开始的找到脏页迁移脏页，变成现在这么复杂的逻辑的。
+
+## 零页
+
+迁移的时候，如果知道这个页面的内容都是0，那么从信息的角度看，其实信息量很小。那是不是有更好的方法去传送这些信息呢？
+
+函数save_zero_page_to_file()，就做了这件事。如果这个页面是零页，我们只传送一些标示符号。
+
+## 压缩
+
+这个想法也比较直接，就是在传送前先压缩一下。这个工作交给了do_compress_ram_page()。
+
+## 多线程
+
+这也是一个比较直观的想法，一个人干活慢，那就多叫几个人。多线程的设置在compress_threads_save_setup()。
+
+## Free Page
+
+这个想法相对来说就比较隐晦了。意思是系统中总有部分的内存没有使用是free的，那么这些内存在最开始的时候就没有必要传送。（默认第一遍是都传送的。）
+
+当然要做到这点，需要在虚拟机中有一个内应。当前这个内应是virtio-balloon。在启动虚拟机时需要加上参数。
+
+```
+-object iothread,id=iothread1 --device virtio-balloon,free-page-hint=true,iothread=iothread1
+```
