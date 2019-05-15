@@ -140,3 +140,89 @@ RAMBlock.bmap是每个RAMBlock表示的地址空间的bitmap。
 ```
 -object iothread,id=iothread1 --device virtio-balloon,free-page-hint=true,iothread=iothread1
 ```
+
+## multifd
+
+接下来这个东西略微有点复杂。也不知道为什么名字叫multifd，好像很有来头的样子。那就先来看看其中重要的数据结构。
+
+第一个叫multifd_send_state。这个结构在函数multifd_save_setup中初始化。样子大概长这样。
+
+```
+    multifd_send_state
+    +-------------------------------+
+    |count                          |  number of created threads
+    |    (int)                      |  = migrate_multifd_channels()
+    |packet_num                     |  global
+    |    (uint64_t)                 |
+    |sem_sync                       |
+    |channels_ready                 |
+    |    (QemuSemaphore)            |
+    |                               |
+    |pages                          |
+    |    (MultiFDPages_t*)          |
+    |                               |
+    |params                         |  [migrate_multifd_channels()]  each channel has one MultiFDSendParams
+    |    (MultiFDSendParams*)       |
+    |                               |      MultiFDSendParams           MultiFDSendParams           MultiFDSendParams  
+    +-------------------------------+      +-------------------+       +-------------------+       +-------------------+
+                                           |page               |       |page               |       |page               |
+                                           | (MultiFDPages_t)  |       | (MultiFDPages_t)  |       | (MultiFDPages_t)  |
+                                           |packet             |       |packet             |       |packet             |
+                                           | (MultiFDPacket_t) |       | (MultiFDPacket_t) |       | (MultiFDPacket_t) |
+                                           |                   |       |                   |       |                   |
+                                           |                   |       |                   |       |                   |
+                                           +-------------------+       +-------------------+       +-------------------+
+```
+
+几点说明：
+
+  * multifd是一个多线程的结构，一共有multifd_send_state->count个线程
+  * 所以也很好理解的是对应有multifd_send_state->count个params，每个线程人手一个不要打架
+  * 每个params中重要的两个成员是page/packet，packet相当于控制信息，page就是数据
+
+接着我们来看看page和packet的样子。
+
+```
+pages
+   (MultiFDPages_t*)
+   +----------------------+
+   |packet_num            |  global
+   |   (uint64_t)         |
+   |block                 |
+   |   (RAMBlock*)        |
+   |allocated             |
+   |used                  |
+   |   (uint32_t)         |
+   |offset                |  [allocated]
+   |   (ram_addr_t)       |
+   |iov                   |  [allocated]
+   |   (struct iovec*)    |
+   |   +------------------+
+   |   |iov_base          |  = block->host + offset
+   |   |iov_len           |  = TARGET_PAGE_SIZE
+   |   +------------------+
+   |                      |
+   +----------------------+
+```
+
+看到这个大家或许能够明白一点，page其实是一个iov的集合。一共分配有allocated个iov的结构，用于发送数据。不过要注意的一点是，发送的所有数据都属于同一个RAMBlock。
+
+```
+packet
+   (MultiFDPacket_t*)
+   +----------------------+
+   |magic                 |  = MULTIFD_MAGIC
+   |version               |  = MULTIFD_VERSION
+   |flags                 |  = params->flags
+   |                      |
+   |pages_alloc           |  = page_count
+   |pages_used            |  = pages->used
+   |next_packet_size      |  = params->next_packet_size
+   |packet_num            |  = params->packet_num
+   |                      |
+   |offset[]              |  [page_count]
+   |    (ram_addr_t)      |
+   +----------------------+
+```
+
+这个相当于每次发送时的元数据了。而且因为iov的传送只有base/len，所以这里还要传送在RAMBlock中的offset。
