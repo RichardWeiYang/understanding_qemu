@@ -6,6 +6,8 @@
 
 # 内存迁移流程
 
+## 发送流程
+
 要说流程，还是要先回到总体架构那一节中的总体流程。
 
 ```
@@ -78,6 +80,87 @@ migration_thread()
 
   * 用bitmap跟踪脏页
   * 将脏页传送到对端
+
+## 接收流程
+
+看完了发送，还得来看看接收。同样，看具体内存之前，先看一看总体架构。
+
+```
+qemu_loadvm_state()
+    qemu_get_be32, QEMU_VM_FILE_MAGIC
+    qemu_get_be32, QEMU_VM_FILE_VERSION
+    qemu_loadvm_state_setup
+        se->ops->load_setup
+    vmstate_load_state(f, &vmstate_configuration, &savevm_state, 0)
+    cpu_synchronize_all_pre_loadvm
+        cpu_synchronize_pre_loadvm(cpu)
+
+    qemu_loadvm_state_main
+        section_type = qemu_get_byte(f)
+        QEMU_VM_SECTION_START | QEMU_VM_SECTION_FULL
+        qemu_loadvm_section_start_full
+           section_id = qemu_get_be32
+           vmstate_load
+        QEMU_VM_SECTION_PART | QEMU_VM_SECTION_END
+        qemu_loadvm_section_part_end
+            section_id = qemu_get_be32
+            vmstate_load
+        QEMU_VM_COMMAND
+        loadvm_process_command
+        QEMU_VM_EOF
+
+    qemu_loadvm_state_cleanup
+        se->ops->load_cleanup
+    cpu_synchronize_all_post_init
+        cpu_synchronize_post_init(cpu);
+```
+
+进一步打开，我们可以看到有这么几个重要的函数。
+
+  * se->ops->load_setup
+  * se->ops->load_state
+
+对应到内存，分别是
+
+  * ram_load_setup
+  * ram_load
+
+# 发送接收对应关系
+
+```
+                 source                                destination
+
+            +------------------------+             +-------------------------+
+            |                        |             |                         |
+  SETUP     | ram_save_setup         |             |  ram_load_setup         |
+            |                        |             |                         |
+            +------------------------+             +-------------------------+
+
+            sync dirty bit to                      Setup RAMBlock->receivedmap
+	    RAMBlock->bmap
+
+
+            +------------------------+             +-------------------------+
+            |                        |             |                         |
+  ITER      | ram_save_pending       |             |  ram_load               |
+            | ram_save_iterate       |             |                         |
+            |                        |             |                         |
+            +------------------------+             +-------------------------+
+
+            sync dirty bit                         Receive page
+	    and send page
+
+
+            +------------------------+             +-------------------------+
+            |                        |             |                         |
+  COMP      | ram_save_pending       |             |  ram_load               |
+            | ram_save_complete      |             |                         |
+            |                        |             |                         |
+            +------------------------+             +-------------------------+
+
+            sync dirty bit                         Receive page
+	          and send page
+```
 
 # 相关数据结构
 
