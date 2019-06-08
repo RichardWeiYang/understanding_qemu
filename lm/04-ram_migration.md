@@ -309,3 +309,16 @@ packet
 ```
 
 这个相当于每次发送时的元数据了。而且因为iov的传送只有base/len，所以这里还要传送在RAMBlock中的offset。
+
+## xbzrle
+
+这个东西也很高端，全称叫 [XOR Based Zero run lenght encoding][1]. 其中使用到的编码是[LEB128][2].
+
+这个东西很有意思，说起来其实也简单。
+
+**不直接传送每个页的内容，而是传送每个页的差值**
+
+怎么样，是不是很有意思？好了，这个思想的所有内容就这么写，其他的就剩下具体的实现细节了。
+
+[1]: https://github.com/qemu/qemu/blob/master/docs/xbzrle.txt
+[2]: https://en.wikipedia.org/wiki/LEB128
