@@ -162,9 +162,34 @@ qemu_loadvm_state()
 	          and send page
 ```
 
-# 相关数据结构
+# 脏页同步
 
-了解了上述内存迁移的总体流程后，我们可以猜到在内存迁移过程中重要的数据结构就是跟踪脏页的bitmap了。
+在整个内存迁移的过程中脏页同步是重中之重了，这一小节我们来看看qemu是如何获得这一段时间中的虚拟机脏页的。
+
+## 代码流程
+
+qemu发起获得脏页的地方有几处，比如每次迭代开始，或者最后要结束的时候。这个动作都通过统一的函数migration_bitmap_sync()。
+
+```
+   migration_bitmap_sync
+       memory_global_dirty_log_sync                          (1)
+           memory_region_sync_dirty_bitmap(NULL);
+               listener->log_sync(listener, &mrs) -> kvm_log_sync
+                   kvm_physical_sync_dirty_bitmap
+       migration_bitmap_sync_range; called on each RAMBlock
+           cpu_physical_memory_sync_dirty_bitmap             (2)
+```
+
+其中主要工作分成两步：
+
+  * 通过KVM_GET_DIRTY_LOG获得脏页到kvm_dirty_log.dirty_bitmap，并复制到ram_list.dirty_memory
+  * 再将ram_list.dirty_memory的脏页拷贝到RAMBlock->bmap
+
+至于KVM_GET_DIRTY_LOG是怎么得到的脏页这个要看kvm的代码，其中一部分的功劳在vmx_flush_pml_buffer()。
+
+## 相关数据结构
+
+在内存迁移过程中重要的数据结构就是跟踪脏页的bitmap了。
 
 其中一共用到了两个bitmap：
 
