@@ -32,7 +32,7 @@ device_set_realized()
   * 计算出该插入到哪里，是不是有空间可以个插入
 
 计算出合适的位置后，讲这个值保存在PCDIMMDevice.addr字段中。
-这个addr就是该内存条在虚拟机中的物理地址。
+这个addr就是该内存条在虚拟机中的物理地址。该地址addr的计算在函数memory_device_get_free_addr()中实现。
 
 # pc_memory_plug
 
