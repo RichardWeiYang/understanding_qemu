@@ -43,3 +43,6 @@
 * [CPU](cpu/00-vcpu.md)
   * [TYPE_CPU](cpu/01-type_cpu.md)
   * [X86_CPU](cpu/02-x86_cpu.md)
+* [MemoryBackend](memory_backend/00-memory_backend.md)
+  * [MemoryBackend类层次结构](memory_backend/01-class_hierarchy.md)
+  * [MemoryBackend初始化流程](memory_backend/02-init_flow.md)
