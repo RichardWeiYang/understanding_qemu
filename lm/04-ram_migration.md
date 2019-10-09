@@ -258,8 +258,6 @@ RAMBlock.bmap是每个RAMBlock表示的地址空间的bitmap。
 ```
     multifd_send_state
     +-------------------------------+
-    |count                          |  number of created threads
-    |    (int)                      |  = migrate_multifd_channels()
     |packet_num                     |  global
     |    (uint64_t)                 |
     |sem_sync                       |
@@ -273,10 +271,12 @@ RAMBlock.bmap是每个RAMBlock表示的地址空间的bitmap。
     |    (MultiFDSendParams*)       |
     |                               |      MultiFDSendParams           MultiFDSendParams           MultiFDSendParams  
     +-------------------------------+      +-------------------+       +-------------------+       +-------------------+
-                                           |page               |       |page               |       |page               |
-                                           | (MultiFDPages_t)  |       | (MultiFDPages_t)  |       | (MultiFDPages_t)  |
+                                           |name               |       |name               |       |name               |
+                                           |  multifdsend_0    |       |  multifdsend_1    |       |  multifdsend_2    |
+                                           |pages              |       |pages              |       |pages              |
+                                           | (MultiFDPages_t*) |       | (MultiFDPages_t*) |       | (MultiFDPages_t*) |
                                            |packet             |       |packet             |       |packet             |
-                                           | (MultiFDPacket_t) |       | (MultiFDPacket_t) |       | (MultiFDPacket_t) |
+                                           | (MultiFDPacket_t*)|       | (MultiFDPacket_t*)|       | (MultiFDPacket_t*)|
                                            |                   |       |                   |       |                   |
                                            |                   |       |                   |       |                   |
                                            +-------------------+       +-------------------+       +-------------------+
@@ -284,9 +284,9 @@ RAMBlock.bmap是每个RAMBlock表示的地址空间的bitmap。
 
 几点说明：
 
-  * multifd是一个多线程的结构，一共有multifd_send_state->count个线程
-  * 所以也很好理解的是对应有multifd_send_state->count个params，每个线程人手一个不要打架
-  * 每个params中重要的两个成员是page/packet，packet相当于控制信息，page就是数据
+  * multifd是一个多线程的结构，一共有migrate_multifd_channels个线程，这个可以通过参数设置
+  * 所以也很好理解的是对应有migrate_multifd_channels()个params，每个线程人手一个不要打架
+  * 每个params中重要的两个成员是pages/packet，packet相当于控制信息，pages就是数据
 
 接着我们来看看page和packet的样子。
 
